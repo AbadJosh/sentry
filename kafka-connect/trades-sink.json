@@ -1,0 +1,31 @@
+{
+  "name": "trades-sink",
+  "config": {
+    "connector.class": "io.confluent.connect.jdbc.JdbcSinkConnector",
+    "tasks.max": "1",
+    "topics": "btcusdt-trades",
+    "connection.url": "jdbc:postgresql://timescaledb:5432/sentry",
+    "connection.user": "${env:TIMESCALEDB_USER}",
+    "connection.password": "${env:TIMESCALEDB_PASSWORD}",
+    "insert.mode": "upsert",
+    "pk.mode": "record_value",
+    "pk.fields": "trade_id,trade_time",
+    "table.name.format": "trades",
+    "auto.create": "false",
+    "auto.evolve": "false",
+    "value.converter": "io.confluent.connect.avro.AvroConverter",
+    "value.converter.schema.registry.url": "http://schema-registry:8081",
+    "transforms": "convertEventTime,convertTradeTime",
+    "transforms.convertEventTime.type": "org.apache.kafka.connect.transforms.TimestampConverter$Value",
+    "transforms.convertEventTime.field": "event_time",
+    "transforms.convertEventTime.target.type": "Timestamp",
+    "transforms.convertTradeTime.type": "org.apache.kafka.connect.transforms.TimestampConverter$Value",
+    "transforms.convertTradeTime.field": "trade_time",
+    "transforms.convertTradeTime.target.type": "Timestamp",
+    "errors.tolerance": "all",
+    "errors.deadletterqueue.topic.name": "btcusdt-trades-connect-dlq",
+    "errors.deadletterqueue.context.headers.enable": "true",
+    "errors.log.enable": "true",
+    "errors.log.include.messages": "true"
+  }
+}
