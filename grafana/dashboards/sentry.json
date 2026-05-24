@@ -1,0 +1,193 @@
+{
+  "title": "Sentry — BTC/USDT Real-Time",
+  "uid": "sentry-btc",
+  "schemaVersion": 39,
+  "version": 1,
+  "editable": true,
+  "graphTooltip": 1,
+  "refresh": "10s",
+  "time": { "from": "now-1h", "to": "now" },
+  "timepicker": {},
+  "links": [],
+  "annotations": { "list": [] },
+  "templating": { "list": [] },
+  "panels": [
+    {
+      "id": 1,
+      "type": "candlestick",
+      "title": "BTC/USDT Price",
+      "gridPos": { "x": 0, "y": 0, "w": 18, "h": 12 },
+      "datasource": { "type": "postgres", "uid": "timescaledb-sentry" },
+      "options": {
+        "candleStyle": "candles",
+        "colorStrategy": "close-open",
+        "fields": {
+          "open": "open",
+          "high": "high",
+          "low": "low",
+          "close": "close"
+        },
+        "mode": "candles",
+        "tooltip": { "mode": "single", "sort": "none" }
+      },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "currencyUSD",
+          "custom": { "hideFrom": { "legend": false, "tooltip": false, "viz": false } }
+        },
+        "overrides": []
+      },
+      "targets": [
+        {
+          "refId": "A",
+          "datasource": { "type": "postgres", "uid": "timescaledb-sentry" },
+          "rawQuery": true,
+          "format": "time_series",
+          "rawSql": "SELECT window_start AS \"time\", open::float, high::float, low::float, close::float FROM ohlcv_1m WHERE $__timeFilter(window_start) AND symbol = 'BTCUSDT' ORDER BY window_start ASC"
+        }
+      ]
+    },
+    {
+      "id": 2,
+      "type": "stat",
+      "title": "Latest Price",
+      "gridPos": { "x": 18, "y": 0, "w": 6, "h": 6 },
+      "datasource": { "type": "postgres", "uid": "timescaledb-sentry" },
+      "options": {
+        "colorMode": "value",
+        "graphMode": "none",
+        "justifyMode": "center",
+        "orientation": "auto",
+        "reduceOptions": { "calcs": ["lastNotNull"], "fields": "", "values": false },
+        "textMode": "auto"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "currencyUSD",
+          "decimals": 2,
+          "color": { "mode": "thresholds" },
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              { "color": "green", "value": null }
+            ]
+          }
+        },
+        "overrides": []
+      },
+      "targets": [
+        {
+          "refId": "A",
+          "datasource": { "type": "postgres", "uid": "timescaledb-sentry" },
+          "rawQuery": true,
+          "format": "table",
+          "rawSql": "SELECT close::float AS \"Price\" FROM ohlcv_1m WHERE symbol = 'BTCUSDT' ORDER BY window_start DESC LIMIT 1"
+        }
+      ]
+    },
+    {
+      "id": 3,
+      "type": "stat",
+      "title": "Trades (Last Minute)",
+      "gridPos": { "x": 18, "y": 6, "w": 6, "h": 6 },
+      "datasource": { "type": "postgres", "uid": "timescaledb-sentry" },
+      "options": {
+        "colorMode": "value",
+        "graphMode": "none",
+        "justifyMode": "center",
+        "orientation": "auto",
+        "reduceOptions": { "calcs": ["lastNotNull"], "fields": "", "values": false },
+        "textMode": "auto"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "short",
+          "decimals": 0,
+          "color": { "mode": "thresholds" },
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              { "color": "blue", "value": null }
+            ]
+          }
+        },
+        "overrides": []
+      },
+      "targets": [
+        {
+          "refId": "A",
+          "datasource": { "type": "postgres", "uid": "timescaledb-sentry" },
+          "rawQuery": true,
+          "format": "table",
+          "rawSql": "SELECT trade_count AS \"Trades\" FROM ohlcv_1m WHERE symbol = 'BTCUSDT' ORDER BY window_start DESC LIMIT 1"
+        }
+      ]
+    },
+    {
+      "id": 4,
+      "type": "timeseries",
+      "title": "Volume (BTC)",
+      "gridPos": { "x": 0, "y": 12, "w": 12, "h": 8 },
+      "datasource": { "type": "postgres", "uid": "timescaledb-sentry" },
+      "options": {
+        "tooltip": { "mode": "single", "sort": "none" },
+        "legend": { "displayMode": "list", "placement": "bottom", "showLegend": false }
+      },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "short",
+          "custom": {
+            "drawStyle": "bars",
+            "fillOpacity": 80,
+            "lineWidth": 0,
+            "barAlignment": 0
+          },
+          "color": { "mode": "fixed", "fixedColor": "blue" }
+        },
+        "overrides": []
+      },
+      "targets": [
+        {
+          "refId": "A",
+          "datasource": { "type": "postgres", "uid": "timescaledb-sentry" },
+          "rawQuery": true,
+          "format": "time_series",
+          "rawSql": "SELECT window_start AS \"time\", volume::float AS \"Volume\" FROM ohlcv_1m WHERE $__timeFilter(window_start) AND symbol = 'BTCUSDT' ORDER BY window_start ASC"
+        }
+      ]
+    },
+    {
+      "id": 5,
+      "type": "timeseries",
+      "title": "Trade Count per Minute",
+      "gridPos": { "x": 12, "y": 12, "w": 12, "h": 8 },
+      "datasource": { "type": "postgres", "uid": "timescaledb-sentry" },
+      "options": {
+        "tooltip": { "mode": "single", "sort": "none" },
+        "legend": { "displayMode": "list", "placement": "bottom", "showLegend": false }
+      },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "short",
+          "custom": {
+            "drawStyle": "bars",
+            "fillOpacity": 60,
+            "lineWidth": 0,
+            "barAlignment": 0
+          },
+          "color": { "mode": "fixed", "fixedColor": "green" }
+        },
+        "overrides": []
+      },
+      "targets": [
+        {
+          "refId": "A",
+          "datasource": { "type": "postgres", "uid": "timescaledb-sentry" },
+          "rawQuery": true,
+          "format": "time_series",
+          "rawSql": "SELECT window_start AS \"time\", trade_count AS \"Trades\" FROM ohlcv_1m WHERE $__timeFilter(window_start) AND symbol = 'BTCUSDT' ORDER BY window_start ASC"
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,15 @@
+{
+  "type": "record",
+  "name": "BtcTrade",
+  "namespace": "com.sentry.btc",
+  "fields": [
+    { "name": "event_type",     "type": "string" },
+    { "name": "event_time",     "type": "long" },
+    { "name": "symbol",         "type": "string" },
+    { "name": "trade_id",       "type": "long" },
+    { "name": "price",          "type": "string" },
+    { "name": "quantity",       "type": "string" },
+    { "name": "trade_time",     "type": "long" },
+    { "name": "is_buyer_maker", "type": "boolean" }
+  ]
+}
