@@ -3,7 +3,8 @@ name: Sentry CI → Deploy to Main
 on:
   pull_request:
     paths:
-      - 'sentry/**'
+      - 'producer/**'
+      - 'consumer/**'
       - '.github/workflows/sentry.yml'
   workflow_dispatch:
 
@@ -17,7 +18,7 @@ jobs:
     runs-on: ubuntu-latest
     defaults:
       run:
-        working-directory: sentry/producer
+        working-directory: producer
     steps:
       - uses: actions/checkout@v4
 
@@ -33,7 +34,7 @@ jobs:
     runs-on: ubuntu-latest
     defaults:
       run:
-        working-directory: sentry/consumer
+        working-directory: consumer
     steps:
       - uses: actions/checkout@v4
 
