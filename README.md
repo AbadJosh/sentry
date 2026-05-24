@@ -4,28 +4,7 @@ Real-time BTC/USDT trade pipeline — Binance WebSocket → Kafka → TimescaleD
 
 ## Architecture
 
-```
-Binance WebSocket
-      │
-      ▼
-  Producer (Python)          Avro + Schema Registry
-      │
-      ▼
-  Kafka (KRaft)  ──────────────────────────────────┐
-      │                                             │
-      ▼                                             ▼
-  Consumer (Python)                    Kafka Connect (JDBC Sink)
-  OHLCV aggregation                    raw trades passthrough
-      │                                             │
-      ▼                                             ▼
-  ohlcv_1m (hypertable)            trades (hypertable)
-      └─────────────┬───────────────────────────────┘
-                    ▼
-               TimescaleDB
-                    │
-                    ▼
-                 Grafana
-```
+![Architecture](images/architecture.png)
 
 ## Stack
 
